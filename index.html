@@ -3,47 +3,36 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orçamento Solar  Áureo</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Painel 10 - Orçamento</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0056b3">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="Áureo Solar">
+  <meta name="theme-color" content="#f59e0b">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="container">
-    <header>
-      <h1>☀️ Áureo Solar</h1>
-      <p>Gerador de Orçamento Fotovoltaico</p>
-    </header>
+    <img src="logo-p10.png" alt="Painel 10" class="logo">
+    <p class="subtitulo">Energia Solar Inteligente</p>
+    
+    <div class="card">
+      <label>Consumo Mensal kWh</label>
+      <input id="kwh" type="number" placeholder="Ex: 1000">
+      
+      <label>Tipo de Sistema</label>
+      <select id="tipo">
+        <option value="micro">Micro Inversor Hoymiles</option>
+        <option value="string">Inversor String Growatt</option>
+      </select>
 
-    <div class="form-box">
-      <h2>Dados do Cliente</h2>
-      <label for="nomeCliente">Nome do Cliente:</label>
-      <input type="text" id="nomeCliente" placeholder="Ex: João Silva">
-      
-      <label for="consumo">Consumo Mensal kWh:</label>
-      <input type="number" id="consumo" placeholder="Ex: 350" value="350">
-      
-      <label for="qtdPlacas">Quantidade de Placas:</label>
-      <input type="number" id="qtdPlacas" placeholder="Ex: 10" value="10">
-      
-      <button onclick="gerarRelatorio()">Gerar 2 Relatórios</button>
+      <button onclick="gerarOrcamento()">Gerar Orçamento</button>
     </div>
 
-    <div id="resultado"></div>
+    <div id="resultado" class="hidden"></div>
+    <button id="btnPdf" onclick="gerarPDF()" class="hidden">Baixar PDF</button>
   </div>
-
   <script src="script.js"></script>
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js')
-          .then(reg => console.log('Service Worker registrado!', reg))
-          .catch(err => console.error('Erro ao registrar Service Worker:', err));
-      });
-    }
+    if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
   </script>
 </body>
 </html>

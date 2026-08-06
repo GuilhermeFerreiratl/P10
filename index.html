@@ -1,38 +1,65 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Painel 10 - Orçamento</title>
-  <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#f59e0b">
-  <link rel="stylesheet" href="style.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-</head>
-<body>
-  <div class="container">
-    <img src="logo-p10.png" alt="Painel 10" class="logo">
-    <p class="subtitulo">Energia Solar Inteligente</p>
-    
-    <div class="card">
-      <label>Consumo Mensal kWh</label>
-      <input id="kwh" type="number" placeholder="Ex: 1000">
-      
-      <label>Tipo de Sistema</label>
-      <select id="tipo">
-        <option value="micro">Micro Inversor Hoymiles</option>
-        <option value="string">Inversor String Growatt</option>
-      </select>
+const PRECOS = {
+  painel: 569.00,
+  micro: 1250.00, // Micro Hoymiles ficou mais caro
+  string: 3800.00, // Inversor String Growatt ficou mais barato
+  estruturaTelha: 293.09,
+  estruturaPerfil: 197.02,
+  cabo6mm: 8.21,
+  mc4: 8.80,
+  geracaoPorKWp: 101
+}
 
-      <button onclick="gerarOrcamento()">Gerar Orçamento</button>
-    </div>
+let dadosOrcamento = {};
 
-    <div id="resultado" class="hidden"></div>
-    <button id="btnPdf" onclick="gerarPDF()" class="hidden">Baixar PDF</button>
-  </div>
-  <script src="script.js"></script>
-  <script>
-    if('serviceWorker' in navigator){ navigator.serviceWorker.register('sw.js'); }
-  </script>
-</body>
-</html>
+function gerarOrcamento(){
+  const kwh = parseFloat(document.getElementById('kwh').value);
+  const tipo = document.getElementById('tipo').value;
+  if(!kwh) return alert("Digite o consumo");
+
+  const kwpNecessario = kwh / PRECOS.geracaoPorKWp;
+  const qtdPainel = Math.ceil(kwpNecessario / 0.620);
+  const qtdMicro = Math.ceil(qtdPainel / 4); // 1 micro pra cada 4 paineis
+
+  let materiais = [];
+  let subtotalMaterial = 0;
+
+  // Painéis
+  const valPainel = qtdPainel * PRECOS.painel;
+  materiais.push({nome: `Painel Solar RONMA 620W Bifacial`, qtd: qtdPainel, valor: PRECOS.painel, total: valPainel});
+  subtotalMaterial += valPainel;
+
+  if(tipo === 'micro'){
+    // MICRO = MAIS CARO
+    const valMicro = qtdMicro * PRECOS.micro;
+    materiais.push({nome: `Micro Inversor HOYMILES 2,25KW`, qtd: qtdMicro, valor: PRECOS.micro, total: valMicro});
+    subtotalMaterial += valMicro;
+  } else {
+    // STRING = MAIS BARATO
+    materiais.push({nome: `Inversor SOLAR GROWATT 6KW`, qtd: 1, valor: PRECOS.string, total: PRECOS.string});
+    subtotalMaterial += PRECOS.string;
+  }
+
+  // Resto igual...
+  const kits = Math.ceil(qtdPainel / 4);
+  const valTelha = kits * PRECOS.estruturaTelha;
+  const valPerfil = kits * PRECOS.estruturaPerfil;
+  materiais.push({nome: `Kit Estrutura Telha Colonial 4 Placas`, qtd: kits, valor: PRECOS.estruturaTelha, total: valTelha});
+  materiais.push({nome: `Kit Perfil Trilho 2.4m`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
+  subtotalMaterial += valTelha + valPerfil;
+
+  const valCabo = qtdPainel * 2 * PRECOS.cabo6mm;
+  const valMc4 = qtdPainel * 2 * PRECOS.mc4;
+  materiais.push({nome: `Cabo Solar CC 6mm`, qtd: qtdPainel * 2, valor: PRECOS.cabo6mm, total: valCabo});
+  materiais.push({nome: `Conector MC4`, qtd: qtdPainel * 2, valor: PRECOS.mc4, total: valMc4});
+  subtotalMaterial += valCabo + valMc4;
+
+  const impostos = subtotalMaterial * 0.21;
+  const instalacao = qtdPainel * 120;
+  const projeto = 510;
+  const fiacao = 320;
+  const subtotalInstalacao = instalacao + projeto + fiacao;
+  const totalGeral = subtotalMaterial + impostos + subtotalInstalacao;
+
+  dadosOrcamento = {kwh, kwpNecessario, qtdPainel, tipo, materiais, subtotalMaterial, impostos, subtotalInstalacao, totalGeral};
+  mostrarResultado();
+}

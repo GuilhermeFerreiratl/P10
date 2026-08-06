@@ -4,7 +4,7 @@ function gerarRelatorio() {
   const qtdPlacas = parseInt(document.getElementById('qtdPlacas').value) || 0;
 
   // Parâmetros do sistema solar
-  const custoPorKwh = 0.95; // R$/kWh
+  const custoPorKwh = 0.96; // R$/kWh
   const tarifaMinima = 50.00; // Taxa de rede R$
   const potenciaPlacaW = 550; // Watts por placa
   const precoPlacaComInstalacao = 850.00; // R$ estimado por placa instalada

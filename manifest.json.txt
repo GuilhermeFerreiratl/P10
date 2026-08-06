@@ -1,0 +1,19 @@
+{
+  "name": "Áureo Solar - Gerador de Orçamento",
+  "short_name": "Áureo Solar",
+  "description": "Aplicativo para geração de orçamentos fotovoltaicos rápida e simplificada.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#f0f4f8",
+  "theme_color": "#0056b3",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>☀️</text></svg>",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

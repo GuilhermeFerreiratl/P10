@@ -1,0 +1,68 @@
+function gerarRelatorio() {
+  const nome = document.getElementById('nomeCliente').value.trim() || 'Cliente';
+  const consumo = parseFloat(document.getElementById('consumo').value) || 0;
+  const qtdPlacas = parseInt(document.getElementById('qtdPlacas').value) || 0;
+
+  // Parâmetros do sistema solar
+  const custoPorKwh = 0.95; // R$/kWh
+  const tarifaMinima = 50.00; // Taxa de rede R$
+  const potenciaPlacaW = 550; // Watts por placa
+  const precoPlacaComInstalacao = 850.00; // R$ estimado por placa instalada
+
+  // Cálculos do sistema
+  const potenciaTotalKw = (qtdPlacas * potenciaPlacaW) / 1000;
+  const producaoEstimadaKwh = qtdPlacas * 45; // ~45 kWh por mês por placa
+  
+  // Cálculos financeiros
+  const contaAtual = consumo * custoPorKwh;
+  const consumoAposSolar = Math.max(0, consumo - producaoEstimadaKwh);
+  const novaConta = (consumoAposSolar * custoPorKwh) + tarifaMinima;
+  const economiaMensal = Math.max(0, contaAtual - novaConta);
+  
+  const investimentoEstimado = qtdPlacas * precoPlacaComInstalacao;
+  const paybackMeses = economiaMensal > 0 ? (investimentoEstimado / economiaMensal).toFixed(1) : 0;
+
+  const resultadoDiv = document.getElementById('resultado');
+  resultadoDiv.innerHTML = `
+    <div class="report-card">
+      <h3>📊 Relatório 1: Análise Técnica e Financeira</h3>
+      <p><strong>Cliente:</strong> ${nome}</p>
+      <hr>
+      <ul>
+        <span>Consumo Atual:</span> <strong>${consumo} kWh/mês (~R$ ${contaAtual.toFixed(2)})</strong>
+      </ul>
+      <ul>
+        <span>Potência Instalada:</span> <strong>${potenciaTotalKw.toFixed(2)} kWp (${qtdPlacas} placas)</strong>
+      </ul>
+      <ul>
+        <span>Geração Estimada:</span> <strong>${producaoEstimadaKwh} kWh/mês</strong>
+      </ul>
+      <ul>
+        <span>Nova Conta Estimada:</span> <strong>R$ ${novaConta.toFixed(2)}/mês</strong>
+      </ul>
+      <ul>
+        <span>Economia Mensal:</span> <strong>R$ ${economiaMensal.toFixed(2)}</strong>
+      </ul>
+      <ul>
+        <span>Investimento Estimado:</span> <strong>R$ ${investimentoEstimado.toFixed(2)}</strong>
+      </ul>
+      <ul>
+        <span>Retorno (Payback):</span> <strong>~${paybackMeses} meses</strong>
+      </ul>
+    </div>
+
+    <div class="report-card destaque">
+      <h3>🚀 Relatório 2: Proposta Comercial</h3>
+      <p>Olá <strong>${nome}</strong>, com base no seu consumo de <strong>${consumo} kWh</strong>, projetamos o sistema fotovoltaico ideal para zerar sua conta de luz (pagando apenas a taxa de rede).</p>
+      
+      <div class="highlight-box">
+        <h4>Economia Estimada no 1º Ano:</h4>
+        <div class="valor-destaque">R$ ${(economiaMensal * 12).toFixed(2)}</div>
+      </div>
+
+      <p style="margin-bottom: 15px;">Com a instalação de <strong>${qtdPlacas} painéis solares</strong>, você se protege contra o aumento das tarifas de energia pelos próximos 25 anos.</p>
+      
+      <button class="btn-imprimir" onclick="window.print()">🖨️ Imprimir / Salvar em PDF</button>
+    </div>
+  `;
+}

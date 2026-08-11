@@ -1,7 +1,7 @@
 const PRECOS = {
   painel: 569.00,
-  micro: 1250.00, // Micro Hoymiles ficou mais caro
-  string: 3800.00, // Inversor String Growatt ficou mais barato
+  micro: 1.250.00, // Micro Hoymiles ficou mais caro
+  string: 3.800.00, // Inversor String Growatt ficou mais barato
   estruturaTelha: 293.09,
   estruturaPerfil: 197.02,
   cabo6mm: 8.21,
@@ -10,6 +10,10 @@ const PRECOS = {
 }
 
 let dadosOrcamento = {};
+
+function formatarBRL(valor){
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
 
 function gerarOrcamento(){
   const kwh = parseFloat(document.getElementById('kwh').value);
@@ -39,7 +43,7 @@ function gerarOrcamento(){
     subtotalMaterial += PRECOS.string;
   }
 
-  // Resto igual...
+  // Estrutura
   const kits = Math.ceil(qtdPainel / 4);
   const valTelha = kits * PRECOS.estruturaTelha;
   const valPerfil = kits * PRECOS.estruturaPerfil;
@@ -47,6 +51,7 @@ function gerarOrcamento(){
   materiais.push({nome: `Kit Perfil Trilho 2.4m`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
   subtotalMaterial += valTelha + valPerfil;
 
+  // Cabos e conectores
   const valCabo = qtdPainel * 2 * PRECOS.cabo6mm;
   const valMc4 = qtdPainel * 2 * PRECOS.mc4;
   materiais.push({nome: `Cabo Solar CC 6mm`, qtd: qtdPainel * 2, valor: PRECOS.cabo6mm, total: valCabo});
@@ -60,6 +65,45 @@ function gerarOrcamento(){
   const subtotalInstalacao = instalacao + projeto + fiacao;
   const totalGeral = subtotalMaterial + impostos + subtotalInstalacao;
 
-  dadosOrcamento = {kwh, kwpNecessario, qtdPainel, tipo, materiais, subtotalMaterial, impostos, subtotalInstalacao, totalGeral};
+  dadosOrcamento = {kwh, kwpNecessario, qtdPainel, tipo, materiais, subtotalMaterial, impostos, instalacao, projeto, fiacao, subtotalInstalacao, totalGeral};
   mostrarResultado();
+}
+
+function mostrarResultado(){
+  const div = document.getElementById('resultado');
+  if(!div) return;
+
+  let html = `<h2>Orçamento Sistema Fotovoltaico</h2>`;
+  html += `<p><b>Consumo:</b> ${dadosOrcamento.kwh} kWh/mês</p>`;
+  html += `<p><b>Potência Necessária:</b> ${dadosOrcamento.kwpNecessario.toFixed(2)} kWp</p>`;
+  html += `<p><b>Qtd Painéis 620W:</b> ${dadosOrcamento.qtdPainel} un</p>`;
+  html += `<p><b>Tipo Inversor:</b> ${dadosOrcamento.tipo === 'micro' ? 'Micro Inversor' : 'String Inversor'}</p>`;
+
+  html += `<h3>Materiais</h3>`;
+  html += `<table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">`;
+  html += `<tr style="background:#eee"><th>Item</th><th>Qtd</th><th>Valor Unit</th><th>Total</th></tr>`;
+
+  dadosOrcamento.materiais.forEach(item => {
+    html += `<tr>
+      <td>${item.nome}</td>
+      <td>${item.qtd}</td>
+      <td>${formatarBRL(item.valor)}</td>
+      <td>${formatarBRL(item.total)}</td>
+    </tr>`;
+  });
+
+  html += `</table>`;
+
+  html += `<h3>Serviços e Taxas</h3>`;
+  html += `<table border="1" cellpadding="8" style="border-collapse: collapse; width: 100%;">`;
+  html += `<tr><td>Subtotal Materiais</td><td>${formatarBRL(dadosOrcamento.subtotalMaterial)}</td></tr>`;
+  html += `<tr><td>Instalação R$120/painel</td><td>${formatarBRL(dadosOrcamento.instalacao)}</td></tr>`;
+  html += `<tr><td>Projeto</td><td>${formatarBRL(dadosOrcamento.projeto)}</td></tr>`;
+  html += `<tr><td>Fiação AC + Quadro</td><td>${formatarBRL(dadosOrcamento.fiacao)}</td></tr>`;
+  html += `<tr><td>Subtotal Instalação</td><td>${formatarBRL(dadosOrcamento.subtotalInstalacao)}</td></tr>`;
+  html += `</table>`;
+
+  html += `<h2>Total Geral: ${formatarBRL(dadosOrcamento.totalGeral)}</h2>`;
+
+  div.innerHTML = html;
 }

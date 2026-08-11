@@ -44,8 +44,8 @@
 <script>
 const PRECOS = {
   painel: 569.00,
-  micro: 1250.00, // Micro Hoymiles ficou mais caro
-  string: 3800.00, // Inversor String Growatt ficou mais barato
+  micro: 1.250.00, // Micro Hoymiles ficou mais caro
+  string: 3.800.00, // Inversor String Growatt ficou mais barato
   estruturaTelha: 293.09,
   estruturaPerfil: 197.02,
   cabo6mm: 8.21,
@@ -141,7 +141,6 @@ function mostrarResultado(){
   html += `<h3>Serviços e Taxas</h3>`;
   html += `<table>`;
   html += `<tr><td>Subtotal Materiais</td><td style="text-align:right">${formatarBRL(dadosOrcamento.subtotalMaterial)}</td></tr>`;
-  html += `<tr><td>Impostos 21%</td><td style="text-align:right">${formatarBRL(dadosOrcamento.impostos)}</td></tr>`;
   html += `<tr><td>Instalação R$120/painel</td><td style="text-align:right">${formatarBRL(dadosOrcamento.instalacao)}</td></tr>`;
   html += `<tr><td>Projeto Elétrico</td><td style="text-align:right">${formatarBRL(dadosOrcamento.projeto)}</td></tr>`;
   html += `<tr><td>Fiação AC + Quadro</td><td style="text-align:right">${formatarBRL(dadosOrcamento.fiacao)}</td></tr>`;

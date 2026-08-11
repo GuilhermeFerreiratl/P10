@@ -26,10 +26,12 @@ function gerarOrcamento(){
   let materiais = [];
   let subtotalMaterial = 0;
 
+  // Painéis
   const valPainel = qtdPainel * PRECOS.painel;
   materiais.push({nome: `Painel Solar RONMA 620W Bifacial`, qtd: qtdPainel, valor: PRECOS.painel, total: valPainel});
   subtotalMaterial += valPainel;
 
+  // Inversor
   if(tipo === 'micro'){
     const valMicro = qtdMicro * PRECOS.micro;
     materiais.push({nome: `Micro Inversor HOYMILES 2,25KW`, qtd: qtdMicro, valor: PRECOS.micro, total: valMicro});
@@ -39,6 +41,7 @@ function gerarOrcamento(){
     subtotalMaterial += PRECOS.string;
   }
 
+  // Estrutura
   const kits = Math.ceil(qtdPainel / 4);
   const valTelha = kits * PRECOS.estruturaTelha;
   const valPerfil = kits * PRECOS.estruturaPerfil;
@@ -46,6 +49,7 @@ function gerarOrcamento(){
   materiais.push({nome: `Kit Perfil Trilho 2.4m`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
   subtotalMaterial += valTelha + valPerfil;
 
+  // Cabos e conectores
   const qtdCaboMc4 = qtdPainel * 2;
   const valCabo = qtdCaboMc4 * PRECOS.cabo6mm;
   const valMc4 = qtdCaboMc4 * PRECOS.mc4;
@@ -53,12 +57,12 @@ function gerarOrcamento(){
   materiais.push({nome: `Conector MC4 Par`, qtd: qtdCaboMc4, valor: PRECOS.mc4, total: valMc4});
   subtotalMaterial += valCabo + valMc4;
 
-  const impostos = subtotalMaterial * 0.21;
+  // SEM IMPOSTOS AGORA
   const instalacao = qtdPainel * 120;
   const projeto = 510;
   const fiacao = 320;
   const subtotalInstalacao = instalacao + projeto + fiacao;
-  const totalGeral = subtotalMaterial + impostos + subtotalInstalacao;
+  const totalGeral = subtotalMaterial + subtotalInstalacao; // Tirei os impostos daqui
 
   let html = `<h2>Relatório para: ${cliente}</h2>`;
   html += `<p><b>Consumo:</b> ${kwh} kWh/mês | <b>Potência:</b> ${kwpNecessario.toFixed(2)} kWp | <b>Painéis:</b> ${qtdPainel} un</p>`;
@@ -70,6 +74,15 @@ function gerarOrcamento(){
   });
   html += `</table>`;
 
+  html += `<h3>Serviços</h3><table>`;
+  html += `<tr><td>Subtotal Materiais</td><td style="text-align:right">${formatarBRL(subtotalMaterial)}</td></tr>`;
+  html += `<tr><td>Instalação R$120/painel</td><td style="text-align:right">${formatarBRL(instalacao)}</td></tr>`;
+  html += `<tr><td>Projeto Elétrico</td><td style="text-align:right">${formatarBRL(projeto)}</td></tr>`;
+  html += `<tr><td>Fiação AC + Quadro</td><td style="text-align:right">${formatarBRL(fiacao)}</td></tr>`;
+  html += `</table>`;
+
   html += `<div class="total">Total Geral: ${formatarBRL(totalGeral)}</div>`;
+  html += `<p style="font-size:12px; color:#666; margin-top:10px">Validade: 30 dias | Áureo Solar</p>`;
+
   document.getElementById('resultado').innerHTML = html;
 }

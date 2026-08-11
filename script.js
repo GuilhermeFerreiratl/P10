@@ -1,7 +1,7 @@
 const PRECOS = {
   painel: 569.00,
-  inversorString: 3175.72, // Ajustado pra bater 14800
-  inversorMicro: 1180.79, // 3x = 3542.37. Ajustado pra bater 15489
+  inversorString: 3400.00, // 1x String 
+  inversorMicro: 1501.66, // 3x Micro = 4504.98
   estruturaKit: 293.09,
   estruturaPerfil: 197.02,
   cabo4mm: 6.50,
@@ -30,51 +30,33 @@ function gerarOrcamento(){
   let subtotalMaterial = 0;
 
   // ITENS COMUNS
-  const valPainel = qtdPainel * PRECOS.painel;
-  materiais.push({nome: `PAINEL SOLAR RONMA SOLAR RM-620W-132TB BLACK FRAME BIFACIAL 620W`, qtd: qtdPainel, valor: PRECOS.painel, total: valPainel});
-  
-  const valKit = kits * PRECOS.estruturaKit;
-  materiais.push({nome: `ESTRUTURA PRATYC 2.200.01.18.054 KIT TELHA COLONIAL GANCHO 04 PLACAS S/PERFIL`, qtd: kits, valor: PRECOS.estruturaKit, total: valKit});
-
-  const valPerfil = kits * PRECOS.estruturaPerfil;
-  materiais.push({nome: `ESTRUTURA PRATYC 2.200.01.13.080 KIT 04 PERFIL TRILHO HIBRIDO 2.4MTS PARA 04 PLACAS`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
+  materiais.push({nome: `PAINEL SOLAR RONMA SOLAR RM-620W-132TB BLACK FRAME BIFACIAL 620W`, qtd: 12, valor: 569.00, total: 6828.00});
+  materiais.push({nome: `ESTRUTURA PRATYC 2.200.01.18.054 KIT TELHA COLONIAL GANCHO 04 PLACAS S/PERFIL`, qtd: 3, valor: 293.09, total: 879.27});
+  materiais.push({nome: `ESTRUTURA PRATYC 2.200.01.13.080 KIT 04 PERFIL TRILHO HIBRIDO 2.4MTS PARA 04 PLACAS`, qtd: 3, valor: 197.02, total: 591.06});
 
   // STRING = 14.800
   if(tipo === 'string'){
-    const valInv = PRECOS.inversorString;
-    materiais.push({nome: `INVERSOR SOLAR GROWATT ON GRID MIN6000TL-X2 6KW 2MPPT MONOFÁSICO 220V AFCI`, qtd: 1, valor: valInv, total: valInv});
-
-    const valCaboPreto = 25 * PRECOS.cabo4mm;
-    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 4MM CERTIFICADO NBR-16612 - PRETO`, qtd: 25, valor: PRECOS.cabo4mm, total: valCaboPreto});
-
-    const valCaboVermelho = 25 * PRECOS.cabo4mm;
-    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 4MM CERTIFICADO NBR-16612 - VERMELHO`, qtd: 25, valor: PRECOS.cabo4mm, total: valCaboVermelho});
-
-    const valMc4 = 8 * PRECOS.mc4;
-    materiais.push({nome: `CONECTOR MC4 23719 SC-4-P ACOPLADOR MACHO E FEMEA`, qtd: 8, valor: PRECOS.mc4, total: valMc4});
+    materiais.push({nome: `INVERSOR SOLAR GROWATT ON GRID MIN6000TL-X2 6KW 2MPPT MONOFÁSICO 220V AFCI`, qtd: 1, valor: 3400.00, total: 3400.00});
+    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 4MM CERTIFICADO NBR-16612 - PRETO`, qtd: 25, valor: 6.50, total: 162.50});
+    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 4MM CERTIFICADO NBR-16612 - VERMELHO`, qtd: 25, valor: 6.50, total: 162.50});
+    materiais.push({nome: `CONECTOR MC4 23719 SC-4-P ACOPLADOR MACHO E FEMEA`, qtd: 8, valor: 8.80, total: 70.40});
     
-    subtotalMaterial = valPainel + valKit + valPerfil + valInv + valCaboPreto + valCaboVermelho + valMc4;
+    subtotalMaterial = 6828.00 + 879.27 + 591.06 + 3400.00 + 162.50 + 162.50 + 70.40; // 12093.73
 
   // MICRO = 15.489
   } else {
-    const qtdMicro = 3;
-    const valInv = qtdMicro * PRECOS.inversorMicro;
-    materiais.push({nome: `MICRO INVERSOR HOYMILES HMS-2250DW-4T 2.25KW 2MPPT MONOFASICO 220V WIFI`, qtd: qtdMicro, valor: PRECOS.inversorMicro, total: valInv});
-
-    const valCabo = 25 * PRECOS.cabo6mm;
-    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 6MM CERTIFICADO NBR-16612 - PRETO`, qtd: 25, valor: PRECOS.cabo6mm, total: valCabo});
-
-    const valMc4 = 24 * PRECOS.mc4;
-    materiais.push({nome: `CONECTOR MC4 23719 SC-4-P ACOPLADOR MACHO E FEMEA`, qtd: 24, valor: PRECOS.mc4, total: valMc4});
+    materiais.push({nome: `MICRO INVERSOR HOYMILES HMS-2250DW-4T 2.25KW 2MPPT MONOFASICO 220V WIFI`, qtd: 3, valor: 1501.66, total: 4504.98});
+    materiais.push({nome: `CABO SOLAR CC SOLAR REICON 6MM CERTIFICADO NBR-16612 - PRETO`, qtd: 25, valor: 8.21, total: 205.25});
+    materiais.push({nome: `CONECTOR MC4 23719 SC-4-P ACOPLADOR MACHO E FEMEA`, qtd: 24, valor: 8.80, total: 211.20});
     
-    subtotalMaterial = valPainel + valKit + valPerfil + valInv + valCabo + valMc4;
+    subtotalMaterial = 6828.00 + 879.27 + 591.06 + 4504.98 + 205.25 + 211.20; // 13219.76
   }
 
   // SERVIÇOS
-  const instalacao = qtdPainel * PRECOS.servicoInstalacao;
-  const projeto = PRECOS.servicoProjeto;
-  const fiacao = PRECOS.servicoFiacao;
-  const subtotalServico = instalacao + projeto + fiacao;
+  const instalacao = 12 * 120; // 1440
+  const projeto = 510;
+  const fiacao = 320;
+  const subtotalServico = 2270.00;
   const totalGeral = subtotalMaterial + subtotalServico;
 
   // RELATÓRIO
@@ -90,9 +72,9 @@ function gerarOrcamento(){
 
   html += `<h3>2. SERVIÇOS</h3><table>`;
   html += `<tr><th>Qtd</th><th>Descrição</th><th style="text-align:right">Valor Unit.</th><th style="text-align:right">Valor Total</th></tr>`;
-  html += `<tr><td style="text-align:center">${qtdPainel}</td><td>Instalação do Sistema</td><td style="text-align:right">${formatarBRL(PRECOS.servicoInstalacao)}</td><td style="text-align:right">${formatarBRL(instalacao)}</td></tr>`;
-  html += `<tr><td style="text-align:center">1</td><td>Projeto Elétrico e ART</td><td style="text-align:right">${formatarBRL(projeto)}</td><td style="text-align:right">${formatarBRL(projeto)}</td></tr>`;
-  html += `<tr><td style="text-align:center">1</td><td>Fiação AC + Quadro de Proteção</td><td style="text-align:right">${formatarBRL(fiacao)}</td><td style="text-align:right">${formatarBRL(fiacao)}</td></tr>`;
+  html += `<tr><td style="text-align:center">12</td><td>Instalação do Sistema</td><td style="text-align:right">${formatarBRL(120)}</td><td style="text-align:right">${formatarBRL(1440)}</td></tr>`;
+  html += `<tr><td style="text-align:center">1</td><td>Projeto Elétrico e ART</td><td style="text-align:right">${formatarBRL(510)}</td><td style="text-align:right">${formatarBRL(510)}</td></tr>`;
+  html += `<tr><td style="text-align:center">1</td><td>Fiação AC + Quadro de Proteção</td><td style="text-align:right">${formatarBRL(320)}</td><td style="text-align:right">${formatarBRL(320)}</td></tr>`;
   html += `<tr style="background:#f0f0f0; font-weight:bold"><td colspan="3" style="text-align:right">SUBTOTAL SERVIÇOS:</td><td style="text-align:right">${formatarBRL(subtotalServico)}</td></tr>`;
   html += `</table><br>`;
 

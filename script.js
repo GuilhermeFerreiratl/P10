@@ -1,7 +1,7 @@
 const PRECOS = {
   painel: 569.00,
-  micro: 989.00,
-  string: 4800.00,
+  micro: 1250.00,
+  string: 3800.00,
   estruturaTelha: 293.09,
   estruturaPerfil: 197.02,
   cabo6mm: 8.21,
@@ -9,9 +9,12 @@ const PRECOS = {
   geracaoPorKWp: 101
 }
 
-let dadosOrcamento = {};
+function formatarBRL(valor){
+  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+}
 
 function gerarOrcamento(){
+  const cliente = document.getElementById('cliente').value || "Cliente";
   const kwh = parseFloat(document.getElementById('kwh').value);
   const tipo = document.getElementById('tipo').value;
   if(!kwh) return alert("Digite o consumo");
@@ -43,10 +46,11 @@ function gerarOrcamento(){
   materiais.push({nome: `Kit Perfil Trilho 2.4m`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
   subtotalMaterial += valTelha + valPerfil;
 
-  const valCabo = qtdPainel * 2 * PRECOS.cabo6mm;
-  const valMc4 = qtdPainel * 2 * PRECOS.mc4;
-  materiais.push({nome: `Cabo Solar CC 6mm`, qtd: qtdPainel * 2, valor: PRECOS.cabo6mm, total: valCabo});
-  materiais.push({nome: `Conector MC4`, qtd: qtdPainel * 2, valor: PRECOS.mc4, total: valMc4});
+  const qtdCaboMc4 = qtdPainel * 2;
+  const valCabo = qtdCaboMc4 * PRECOS.cabo6mm;
+  const valMc4 = qtdCaboMc4 * PRECOS.mc4;
+  materiais.push({nome: `Cabo Solar CC 6mm`, qtd: qtdCaboMc4, valor: PRECOS.cabo6mm, total: valCabo});
+  materiais.push({nome: `Conector MC4 Par`, qtd: qtdCaboMc4, valor: PRECOS.mc4, total: valMc4});
   subtotalMaterial += valCabo + valMc4;
 
   const impostos = subtotalMaterial * 0.21;
@@ -56,42 +60,16 @@ function gerarOrcamento(){
   const subtotalInstalacao = instalacao + projeto + fiacao;
   const totalGeral = subtotalMaterial + impostos + subtotalInstalacao;
 
-  dadosOrcamento = {kwh, kwpNecessario, qtdPainel, tipo, materiais, subtotalMaterial, impostos, subtotalInstalacao, totalGeral};
-  mostrarResultado();
-}
+  let html = `<h2>Relatório para: ${cliente}</h2>`;
+  html += `<p><b>Consumo:</b> ${kwh} kWh/mês | <b>Potência:</b> ${kwpNecessario.toFixed(2)} kWp | <b>Painéis:</b> ${qtdPainel} un</p>`;
 
-function mostrarResultado(){
-  const d = dadosOrcamento;
-  let html = `<div class="bg-white p-6 rounded-2xl shadow-md">`;
-  html += `<h2 class="text-xl font-bold mb-4">Orçamento ${d.kwpNecessario.toFixed(2)} KWp - ${d.kwh} kWh/mês</h2>`;
-  
-  html += `<h3 class="font-bold mt-4">1. Materiais</h3><table class="w-full text-sm mt-2">`;
-  d.materiais.forEach(m => {
-    html += `<tr><td>${m.qtd}x ${m.nome}</td><td class="text-right">R$ ${m.total.toFixed(2)}</td></tr>`;
+  html += `<h3>Detalhamento dos Materiais</h3><table>`;
+  html += `<tr><th>Item</th><th>Qtd</th><th>Unit</th><th>Total</th></tr>`;
+  materiais.forEach(item => {
+    html += `<tr><td>${item.nome}</td><td style="text-align:center">${item.qtd}</td><td style="text-align:right">${formatarBRL(item.valor)}</td><td style="text-align:right">${formatarBRL(item.total)}</td></tr>`;
   });
-  html += `<tr class="font-bold"><td>Subtotal Material</td><td class="text-right">R$ ${d.subtotalMaterial.toFixed(2)}</td></tr>`;
-  html += `<tr><td>Impostos ~21%</td><td class="text-right">R$ ${d.impostos.toFixed(2)}</td></tr></table>`;
+  html += `</table>`;
 
-  html += `<h3 class="font-bold mt-4">2. Instalação</h3><table class="w-full text-sm mt-2">`;
-  html += `<tr><td>Instalação R$120 x ${d.qtdPainel} paineis</td><td class="text-right">R$ ${(d.qtdPainel*120).toFixed(2)}</td></tr>`;
-  html += `<tr><td>Projeto COPEL</td><td class="text-right">R$ 510.00</td></tr>`;
-  html += `<tr><td>Fiação Cobre + Haste Aterramento</td><td class="text-right">R$ 320.00</td></tr>`;
-  html += `<tr class="font-bold"><td>Subtotal Instalação</td><td class="text-right">R$ ${d.subtotalInstalacao.toFixed(2)}</td></tr></table>`;
-
-  html += `<h3 class="font-bold text-lg mt-4 text-amber-600">TOTAL GERAL: R$ ${d.totalGeral.toFixed(2)}</h3>`;
-  html += `</div>`;
-
+  html += `<div class="total">Total Geral: ${formatarBRL(totalGeral)}</div>`;
   document.getElementById('resultado').innerHTML = html;
-  document.getElementById('resultado').classList.remove('hidden');
-  document.getElementById('btnPdf').classList.remove('hidden');
-}
-
-function gerarPDF(){
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF();
-  doc.text("Painel 10 - Orçamento", 10, 10);
-  doc.text(`Sistema: ${dadosOrcamento.kwpNecessario.toFixed(2)} KWp`, 10, 20);
-  doc.text(`Geração: ${dadosOrcamento.kwh} kWh/mês`, 10, 30);
-  doc.text(`Total: R$ ${dadosOrcamento.totalGeral.toFixed(2)}`, 10, 40);
-  doc.save("orcamento-painel10.pdf");
 }

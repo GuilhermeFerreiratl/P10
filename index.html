@@ -3,155 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Orçamento Solar</title>
-  <style>
-    body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-    .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 8px #ccc; }
-    h1, h2, h3 { color: #0056b3; }
-    label { display: block; margin-top: 10px; font-weight: bold; }
-    input, select, button { padding: 12px; margin: 8px 0; font-size: 16px; width: 100%; box-sizing: border-box; border-radius: 5px; border: 1px solid #ccc; }
-    button { background: #28a745; color: white; border: none; cursor: pointer; font-weight: bold; }
-    button:hover { background: #218838; }
-    button:nth-child(2) { background: #007bff; }
-    button:nth-child(2):hover { background: #0056b3; }
-    table { width: 100%; margin-top: 15px; border-collapse: collapse; }
-    th { background: #007bff; color: white; padding: 10px; text-align: left; }
-    td { padding: 10px; border-bottom: 1px solid #ddd; }
-    #resultado { margin-top: 30px; }
-    @media print { button { display: none; } body { background: white; } .container { box-shadow: none; } }
-  </style>
+  <title>Orçamento Solar Áureo</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<div class="container">
-  <h1>Gerador de Orçamento Solar</h1>
+<div class="card">
+  <div class="logo">
+    <h1>☀️ Áureo Solar</h1>
+    <p>Gerador de Orçamento Fotovoltaico</p>
+  </div>
+
+  <div class="form-group">
+    <label>Nome do Cliente:</label>
+    <input id="cliente" type="text" placeholder="Ex: João Silva">
+  </div>
+
+  <div class="form-group">
+    <label>Consumo Mensal kWh:</label>
+    <input id="kwh" type="number" placeholder="Ex: 350">
+  </div>
+
+  <div class="form-group">
+    <label>Tipo de Inversor:</label>
+    <select id="tipo">
+      <option value="string">String - Growatt 6KW</option>
+      <option value="micro">Micro - Hoymiles</option>
+    </select>
+  </div>
   
-  <label>Consumo Mensal kWh:</label>
-  <input id="kwh" type="number" placeholder="Ex: 500">
-  
-  <label>Tipo de Inversor:</label>
-  <select id="tipo">
-    <option value="string">String - Growatt 6KW</option>
-    <option value="micro">Micro - Hoymiles</option>
-  </select>
-  
-  <button onclick="gerarOrcamento()">Gerar Orçamento</button>
-  <button onclick="window.print()">Imprimir / Salvar PDF</button>
+  <button class="btn" onclick="gerarOrcamento()">Gerar 2 Relatórios</button>
+  <button class="btn btn-print" onclick="window.print()">Imprimir / Salvar PDF</button>
 
   <div id="resultado"></div>
 </div>
 
-<script>
-const PRECOS = {
-  painel: 569.00,
-  micro: 1.250.00, // Micro Hoymiles ficou mais caro
-  string: 3.800.00, // Inversor String Growatt ficou mais barato
-  estruturaTelha: 293.09,
-  estruturaPerfil: 197.02,
-  cabo6mm: 8.21,
-  mc4: 8.80,
-  geracaoPorKWp: 101
-}
-
-let dadosOrcamento = {};
-
-function formatarBRL(valor){
-  return valor.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-}
-
-function gerarOrcamento(){
-  const kwh = parseFloat(document.getElementById('kwh').value);
-  const tipo = document.getElementById('tipo').value;
-  if(!kwh || kwh <= 0) return alert("Digite um consumo válido");
-
-  const kwpNecessario = kwh / PRECOS.geracaoPorKWp;
-  const qtdPainel = Math.ceil(kwpNecessario / 0.620);
-  const qtdMicro = Math.ceil(qtdPainel / 4); // 1 micro pra cada 4 paineis
-
-  let materiais = [];
-  let subtotalMaterial = 0;
-
-  // Painéis
-  const valPainel = qtdPainel * PRECOS.painel;
-  materiais.push({nome: `Painel Solar RONMA 620W Bifacial`, qtd: qtdPainel, valor: PRECOS.painel, total: valPainel});
-  subtotalMaterial += valPainel;
-
-  // Inversor
-  if(tipo === 'micro'){
-    const valMicro = qtdMicro * PRECOS.micro;
-    materiais.push({nome: `Micro Inversor HOYMILES 2,25KW`, qtd: qtdMicro, valor: PRECOS.micro, total: valMicro});
-    subtotalMaterial += valMicro;
-  } else {
-    materiais.push({nome: `Inversor SOLAR GROWATT 6KW`, qtd: 1, valor: PRECOS.string, total: PRECOS.string});
-    subtotalMaterial += PRECOS.string;
-  }
-
-  // Estrutura
-  const kits = Math.ceil(qtdPainel / 4);
-  const valTelha = kits * PRECOS.estruturaTelha;
-  const valPerfil = kits * PRECOS.estruturaPerfil;
-  materiais.push({nome: `Kit Estrutura Telha Colonial 4 Placas`, qtd: kits, valor: PRECOS.estruturaTelha, total: valTelha});
-  materiais.push({nome: `Kit Perfil Trilho 2.4m`, qtd: kits, valor: PRECOS.estruturaPerfil, total: valPerfil});
-  subtotalMaterial += valTelha + valPerfil;
-
-  // Cabos e conectores
-  const qtdCaboMc4 = qtdPainel * 2;
-  const valCabo = qtdCaboMc4 * PRECOS.cabo6mm;
-  const valMc4 = qtdCaboMc4 * PRECOS.mc4;
-  materiais.push({nome: `Cabo Solar CC 6mm`, qtd: qtdCaboMc4, valor: PRECOS.cabo6mm, total: valCabo});
-  materiais.push({nome: `Conector MC4 Par`, qtd: qtdCaboMc4, valor: PRECOS.mc4, total: valMc4});
-  subtotalMaterial += valCabo + valMc4;
-
-  // Taxas e Serviços
-  const impostos = subtotalMaterial * 0.21;
-  const instalacao = qtdPainel * 120;
-  const projeto = 510;
-  const fiacao = 320;
-  const subtotalInstalacao = instalacao + projeto + fiacao;
-  const totalGeral = subtotalMaterial + impostos + subtotalInstalacao;
-
-  dadosOrcamento = {kwh, kwpNecessario, qtdPainel, tipo, materiais, subtotalMaterial, impostos, instalacao, projeto, fiacao, subtotalInstalacao, totalGeral};
-  mostrarResultado();
-}
-
-function mostrarResultado(){
-  const div = document.getElementById('resultado');
-  
-  let html = `<h2>Relatório de Orçamento</h2>`;
-  html += `<p><b>Consumo Informado:</b> ${dadosOrcamento.kwh} kWh/mês</p>`;
-  html += `<p><b>Potência Necessária:</b> ${dadosOrcamento.kwpNecessario.toFixed(2)} kWp</p>`;
-  html += `<p><b>Quantidade de Painéis:</b> ${dadosOrcamento.qtdPainel} un de 620W</p>`;
-  html += `<p><b>Tipo de Sistema:</b> ${dadosOrcamento.tipo === 'micro' ? 'Micro Inversor' : 'String Inversor'}</p>`;
-
-  html += `<h3>Detalhamento dos Materiais</h3>`;
-  html += `<table>`;
-  html += `<tr><th>Item</th><th style="text-align:center">Qtd</th><th style="text-align:right">Valor Unit</th><th style="text-align:right">Total</th></tr>`;
-
-  dadosOrcamento.materiais.forEach(item => {
-    html += `<tr>
-      <td>${item.nome}</td>
-      <td style="text-align:center">${item.qtd}</td>
-      <td style="text-align:right">${formatarBRL(item.valor)}</td>
-      <td style="text-align:right">${formatarBRL(item.total)}</td>
-    </tr>`;
-  });
-
-  html += `</table>`;
-
-  html += `<h3>Serviços e Taxas</h3>`;
-  html += `<table>`;
-  html += `<tr><td>Subtotal Materiais</td><td style="text-align:right">${formatarBRL(dadosOrcamento.subtotalMaterial)}</td></tr>`;
-  html += `<tr><td>Instalação R$120/painel</td><td style="text-align:right">${formatarBRL(dadosOrcamento.instalacao)}</td></tr>`;
-  html += `<tr><td>Projeto Elétrico</td><td style="text-align:right">${formatarBRL(dadosOrcamento.projeto)}</td></tr>`;
-  html += `<tr><td>Fiação AC + Quadro</td><td style="text-align:right">${formatarBRL(dadosOrcamento.fiacao)}</td></tr>`;
-  html += `<tr><td><b>Subtotal Serviços</b></td><td style="text-align:right"><b>${formatarBRL(dadosOrcamento.subtotalInstalacao)}</b></td></tr>`;
-  html += `</table>`;
-
-  html += `<h2 style="color:green; text-align:right">Total Geral: ${formatarBRL(dadosOrcamento.totalGeral)}</h2>`;
-
-  div.innerHTML = html;
-}
-</script>
-
+<script src="script.js"></script>
 </body>
 </html>

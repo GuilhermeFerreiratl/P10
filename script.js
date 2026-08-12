@@ -1,13 +1,13 @@
 const PRECOS = {
   painel: 569.00,
-  inversorString: 3195.73, // Travado pra bater 14.800 em 750kWh
-  inversorMicro: 1297.39,  // Travado pra bater 15.489 em 750kWh. 3x = 3892.17
+  inversorString: 3195.73, 
+  inversorMicro: 1297.39,  
   estruturaKit: 293.09,
   estruturaPerfil: 197.02,
   cabo4mm: 6.50,
   cabo6mm: 8.21,
   mc4: 8.80,
-  servicoInstalacao: 120, // R$120 POR PAINEL
+  servicoInstalacao: 120, 
   servicoProjeto: 510,
   servicoFiacao: 320
 }
@@ -27,15 +27,17 @@ function gerarOrcamento(){
   const potenciaPainel = 0.620; 
   const qtdPainel = Math.ceil(kwpNecessario / potenciaPainel); 
   const kwp = (qtdPainel * potenciaPainel).toFixed(2);
-  const kits = Math.ceil(qtdPainel / 4); 
+  
+  // REGRA NOVA: 1 KIT E 1 PERFIL A CADA 4 PAINEIS
+  const qtdEstrutura = Math.ceil(qtdPainel / 4); 
 
   let materiais = [];
   let subtotalMaterial = 0;
 
   // ITENS COMUNS
   materiais.push({nome: `PAINEL SOLAR RONMA SOLAR 620W BLACK FRAME`, qtd: qtdPainel, valor: PRECOS.painel, total: qtdPainel * PRECOS.painel});
-  materiais.push({nome: `ESTRUTURA PRATYC KIT TELHA COLONIAL`, qtd: kits, valor: PRECOS.estruturaKit, total: kits * PRECOS.estruturaKit});
-  materiais.push({nome: `ESTRUTURA PRATYC PERFIL TRILHO 2.4M`, qtd: kits, valor: PRECOS.estruturaPerfil, total: kits * PRECOS.estruturaPerfil});
+  materiais.push({nome: `ESTRUTURA PRATYC KIT TELHA COLONIAL`, qtd: qtdEstrutura, valor: PRECOS.estruturaKit, total: qtdEstrutura * PRECOS.estruturaKit}); // CORRIGIDO
+  materiais.push({nome: `ESTRUTURA PRATYC PERFIL TRILHO 2.4M`, qtd: qtdEstrutura, valor: PRECOS.estruturaPerfil, total: qtdEstrutura * PRECOS.estruturaPerfil}); // CORRIGIDO
 
   // CABOS: 2 CABOS POR PAINEL
   const metrosCaboTotal = qtdPainel * 2;
@@ -51,7 +53,7 @@ function gerarOrcamento(){
 
   // MICRO: 1 INVERSOR A CADA 4 PAINÉIS
   } else {
-    const qtdMicro = Math.ceil(qtdPainel / 4); // REGRA NOVA AQUI
+    const qtdMicro = Math.ceil(qtdPainel / 4); 
     materiais.push({nome: `MICRO INVERSOR HOYMILES 2250W`, qtd: qtdMicro, valor: PRECOS.inversorMicro, total: qtdMicro * PRECOS.inversorMicro});
     
     materiais.push({nome: `CABO SOLAR 6MM - PRETO`, qtd: metrosCaboTotal, valor: PRECOS.cabo6mm, total: metrosCaboTotal * PRECOS.cabo6mm});

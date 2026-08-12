@@ -1,7 +1,7 @@
 const PRECOS = {
   painel: 569.00,
-  inversorString: 3195.73, // AJUSTADO 
-  inversorMicro: 1297.39, // AJUSTADO. 3x = 3892.17
+  inversorString: 3195.73, // Travado pra bater 14.800 em 750kWh
+  inversorMicro: 1297.39,  // Travado pra bater 15.489 em 750kWh. 3x = 3892.17
   estruturaKit: 293.09,
   estruturaPerfil: 197.02,
   cabo4mm: 6.50,
@@ -49,9 +49,9 @@ function gerarOrcamento(){
     materiais.push({nome: `CABO SOLAR 4MM - VERMELHO`, qtd: metrosCaboTotal, valor: PRECOS.cabo4mm, total: metrosCaboTotal * PRECOS.cabo4mm});
     materiais.push({nome: `CONECTOR MC4`, qtd: qtdPainel, valor: PRECOS.mc4, total: qtdPainel * PRECOS.mc4});
 
-  // MICRO
+  // MICRO: 1 INVERSOR A CADA 4 PAINÉIS
   } else {
-    const qtdMicro = 3; // Travado em 3 pra bater 7.44kWp
+    const qtdMicro = Math.ceil(qtdPainel / 4); // REGRA NOVA AQUI
     materiais.push({nome: `MICRO INVERSOR HOYMILES 2250W`, qtd: qtdMicro, valor: PRECOS.inversorMicro, total: qtdMicro * PRECOS.inversorMicro});
     
     materiais.push({nome: `CABO SOLAR 6MM - PRETO`, qtd: metrosCaboTotal, valor: PRECOS.cabo6mm, total: metrosCaboTotal * PRECOS.cabo6mm});
